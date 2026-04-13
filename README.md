@@ -1,4 +1,4 @@
-# Deployment Lesson 5 – CI/CD with GitHub Actions
+# 7.5 – CI/CD with GitHub Actions
 
 ## What is CI/CD?
 
@@ -148,6 +148,49 @@ jobs:
 ```
 
 Every `run` is a shell command. Every `uses` pulls in a pre-built action. Steps run top to bottom — if any step fails, everything after it is skipped.
+
+---
+
+## `run` vs `uses` — What's the difference?
+
+**`run`** is just a shell command. Anything you'd type in a terminal:
+```yaml
+run: npm install
+run: npm test
+run: curl "https://..."
+```
+
+**`uses`** pulls in a pre-built, reusable action — code someone else wrote and published so you don't have to. Instead of writing 20 shell commands to install Node correctly across different operating systems, someone already packaged that up:
+```yaml
+uses: actions/setup-node@v4
+with:
+  node-version: '20'
+```
+
+The `@v4` is just the version tag — same idea as `npm install express@4`.
+
+### Who writes these actions and where do you find them?
+
+Actions live on GitHub as regular repos. `actions/checkout@v4` is literally **github.com/actions/checkout** — you can go read the source code right now. The `actions/` ones are written and maintained by GitHub themselves.
+
+But anyone can publish an action. The official marketplace is:
+
+**[marketplace.github.com/actions](https://github.com/marketplace?type=actions)**
+
+Search for anything — "deploy to S3", "send Slack notification", "set up Python" — and you'll find documented, community-built actions ready to drop into your workflow.
+
+### If you've done Docker, you already know this shape
+
+The runner starts as a completely blank machine — no files, no Node, nothing. The workflow builds it up step by step, which maps directly to what you've seen in Docker:
+
+| Docker | GitHub Actions |
+|--------|----------------|
+| `FROM ubuntu` | `runs-on: ubuntu-latest` |
+| `COPY . .` | `uses: actions/checkout@v4` |
+| `RUN npm install` | `run: npm install` |
+| `CMD node server.js` | `run: node server.js` |
+
+`actions/checkout` is doing exactly what `COPY . .` does — the runner has no idea what your project is until you clone it onto the machine.
 
 ---
 
