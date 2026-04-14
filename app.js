@@ -16,7 +16,7 @@ app.get('/', (req, res) => {
 })
 
 app.get('/menu', (req, res) => {
-  res.json(null)
+  res.json(menuItems)
 })
 
 app.get('/menu/:id', (req, res) => {
