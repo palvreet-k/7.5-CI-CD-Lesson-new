@@ -1,0 +1,21 @@
+name: Test and Deploy           # shown in the Actions tab
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:                       # job name (you choose this)
+    runs-on: ubuntu-latest      # fresh Ubuntu VM for each run
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: npm install
+      - name: Run tests          # ← CI: pipeline stops here if tests fail
+        run: npm test
+      - name: Deploy to Render   # ← CD: only runs if tests pass
+        run: curl "${{ secrets.RENDER_DEPLOY_HOOK }}"
